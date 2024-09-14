@@ -1,24 +1,38 @@
 import numpy as np
-from config import CONFIG
+import random
 
-def simulate_data_stream():
-    size = CONFIG['stream_size']
-    seasonality = CONFIG['seasonality']
-    noise_level = CONFIG['noise_level']
-    anomaly_rate = CONFIG['anomaly_rate']
-    drift_start = CONFIG['drift_start']
-    drift_rate = CONFIG['drift_rate']
+def generate_data_stream(pattern_length):
+    try:
+        if not isinstance(pattern_length, int) or pattern_length <= 0:
+            raise ValueError("Pattern length must be a positive integer.")
 
-    time = np.arange(size)
-    seasonal_pattern = np.sin(2 * np.pi * time / seasonality)
-    noise = np.random.normal(0, noise_level, size)
-    data = seasonal_pattern + noise
+        # Randomize amplitude, center value, and phase angle
+        A = random.uniform(20, 100)       # Random amplitude between 20 and 100
+        center = random.uniform(50, 150)  # Random center value between 50 and 150
+        phi = random.uniform(0, 360)      # Random phase angle in degrees
+        T = 2 * np.pi / 100               # Fixed period (unchanged)
+        t = np.arange(pattern_length)
+        
+        # Generate sinusoidal pattern with random parameters
+        sin_pattern = A * np.sin(T * t - np.radians(phi)) + center
 
-    # Introduce concept drift
-    data[drift_start:] += drift_rate * (time[drift_start:] - drift_start)
+        return sin_pattern
 
-    # Inject anomalies
-    anomalies = np.random.choice([0, 1], size=size, p=[1 - anomaly_rate, anomaly_rate])
-    data[anomalies == 1] += np.random.uniform(5, 15, size=np.sum(anomalies))
+    except ValueError as e:
+        print(f"Error in generate_data_stream: {e}")
 
-    return data, anomalies
+def add_anomalies_to_data(data_stream):
+    try:
+        if not isinstance(data_stream, (list, np.ndarray)):
+            raise TypeError("Data stream must be a list or NumPy array.")
+
+        # Randomize the number and positions of anomalies
+        num_anomalies = random.randint(5, 10)  # Random number of anomalies between 5 and 10
+        anomaly_indices = random.sample(range(50, len(data_stream)-50), num_anomalies)
+
+        for idx in anomaly_indices:
+            # Set a random value for the anomaly (random deviation from the center)
+            data_stream[idx] = random.uniform(10, 70)  # Random anomaly value between 10 and 70
+
+    except TypeError as e:
+        print(f"Error in add_anomalies_to_data: {e}")

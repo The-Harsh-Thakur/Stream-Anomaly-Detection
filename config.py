@@ -1,12 +1,13 @@
-# Configuration settings for data stream simulation and anomaly detection
+import random
+
+# Configuration for the anomaly detection and data stream
 CONFIG = {
-    'stream_size': 10000,
-    'seasonality': 50,
-    'noise_level': 0.5,
-    'anomaly_rate': 0.01,
-    'drift_start': 3000,           # When concept drift starts
-    'drift_rate': 0.1,             # Rate of drift (change in mean)
-    'window_size': 100,            # Size of sliding window
-    'contamination': 0.01,         # For Isolation Forest
-    'use_parallel': True           # Enable parallel processing
+    'pattern_length': 1000,  # Fixed length of the data stream
+
+    # Randomize the number of trees and tree size slightly for each run
+    'num_trees': random.randint(30, 50),  # Random number of trees between 30 and 50
+    'tree_size': random.randint(200, 300),  # Random tree size between 200 and 300
+
+    # Randomize the size of the sliding window (shingle size)
+    'shingle_size': random.randint(3, 6)   # Random window size between 3 and 6
 }

@@ -1,13 +1,33 @@
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+from plotly.offline import plot  # For offline plotting
 
-def visualize_data(data, anomalies):
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, 
-                        vertical_spacing=0.1, subplot_titles=('Data Stream', 'Detected Anomalies'))
-    
-    fig.add_trace(go.Scatter(y=data, mode='lines', name='Data Stream'), row=1, col=1)
-    fig.add_trace(go.Scatter(x=anomalies, y=data[anomalies], mode='markers', 
-                             marker=dict(color='red', size=8), name='Anomalies'), row=2, col=1)
-    
-    fig.update_layout(title='Real-Time Anomaly Detection', height=600, showlegend=True)
-    fig.show()
+def visualize_data(data_stream, anomaly_scores):
+    fig = go.Figure()
+
+    # Add trace for data stream
+    fig.add_trace(go.Scatter(
+        x=list(range(len(data_stream))),
+        y=data_stream,
+        mode='lines',
+        name='Data Stream'
+    ))
+
+    # Add trace for anomaly scores
+    fig.add_trace(go.Scatter(
+        x=list(range(len(anomaly_scores))),
+        y=anomaly_scores,
+        mode='lines',
+        name='Anomaly Score',
+        line=dict(color='red')
+    ))
+
+    # Update layout
+    fig.update_layout(
+        title="Anomaly Detection in Data Stream",
+        xaxis_title="Index",
+        yaxis_title="Value",
+        height=600
+    )
+
+    # Save the plot as an HTML file and open it in the default browser
+    plot(fig, filename='anomaly_detection_plot.html', auto_open=True)
